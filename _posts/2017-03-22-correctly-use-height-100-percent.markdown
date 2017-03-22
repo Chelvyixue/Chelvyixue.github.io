@@ -30,6 +30,9 @@ main {
   height: 100%;
   width: 100%;
 }
+
+/* 其他样式 */
+/* ... */
 {% endhighlight %}
 
 但是我实际得到的页面是这样的：![实际的效果](/assets/correctly-use-height-100-percent/actual.png)
@@ -38,7 +41,7 @@ main {
 
 如果用阴影标注被隐藏的部分，页面是这个样子的：![整个页面被拉长了](/assets/correctly-use-height-100-percent/analyse.png)
 
-我们来看看究竟发生了什么。实际上，最终页面上 `<main>` 部分（红色区域）的高度，刚好是窗口的高度。它和窗口等高，头尾再加上两段固定的高度，整个页面的高度自然就超过窗口的高度了。
+我们来看看究竟发生了什么。实际上，最终页面上 `<main>` 部分（蓝色区域）的高度，刚好是窗口的高度。它和窗口等高，头尾再加上两段固定的高度，整个页面的高度自然就超过窗口的高度了。
 
 ## 使用绝对定位解决
 
@@ -88,3 +91,23 @@ main {
   width: 100%;
 }
 {% endhighlight %}
+
+## 使用 Flex 解决
+
+既然谈到布局，我们就可以考虑为布局而生的 Flexbox。应用 Flexbox 时，需要将父元素容器的 `display` 属性设成 `flex`，然后调整各个子元素的 `flex` 属性。
+
+本例中的布局是从上到下，所以还需要将父元素的 `flex-flow` 属性设置为 `column`。`<header>` 和 `<footer>` 的 `flex-basis` 为我需要的固定高度，`flex-grow` 均为 0，而 `<main>` 的 `flex-grow` 设为 1。这样，`<main>` 部分会优先展开，`<header>` 和 `<footer>` 被压缩到顶部和底部。
+
+{% highlight css %}
+/* ... */
+body {
+  display: flex;
+  flex-flow: column;
+}
+
+header, footer { flex: 0 1 60px; } /* 使用 flex 缩写 */
+
+main { flex: 1 1 auto; }
+{% endhighlight %}
+
+不需要更多的代码了。我觉得这种方法是最优雅的。
